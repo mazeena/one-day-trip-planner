@@ -3,6 +3,7 @@
 @section('title', 'Map View - TripMalwana')
 
 @section('styles')
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
     #map {
         height: 520px;
@@ -40,7 +41,7 @@
 <div class="container mb-5">
     <div class="row g-4">
 
-        <!-- Map -->
+        {{-- Map --}}
         <div class="col-lg-8">
             <div id="map"></div>
             <p class="text-muted mt-2 small">
@@ -49,7 +50,7 @@
             </p>
         </div>
 
-        <!-- Sidebar List -->
+        {{-- Sidebar List --}}
         <div class="col-lg-4">
             <div class="card" style="max-height: 540px; overflow-y: auto;">
                 <div class="card-header bg-white fw-bold">
@@ -80,87 +81,75 @@
 @endsection
 
 @section('scripts')
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
     var attractionsData = {!! json_encode($attractions->map(function($a) {
         return [
-            'id' => $a->attraction_id,
-            'name' => $a->name,
+            'id'       => $a->attraction_id,
+            'name'     => $a->name,
             'category' => $a->category->category_name,
             'distance' => $a->distance,
             'location' => $a->location,
-            'lat' => $a->latitude,
-            'lng' => $a->longitude,
-            'url' => route('attractions.show', $a->attraction_id),
+            'lat'      => $a->latitude,
+            'lng'      => $a->longitude,
+            'url'      => route('attractions.show', $a->attraction_id),
         ];
     })) !!};
 
-    function initMap() {
-        var malwana = { lat: 6.872874, lng: 80.699653 };
+    // Initialize map centered on Malwana
+    var map = L.map('map').setView([6.872874, 80.699653], 11);
 
-        var map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 11,
-            center: malwana,
-        });
+    // OpenStreetMap tile layer — FREE, no API key required
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 18,
+    }).addTo(map);
 
-        new google.maps.Marker({
-            position: malwana,
-            map: map,
-            title: "Malwana (Center)",
-            icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                fillColor: "#f0a500",
-                fillOpacity: 1,
-                strokeWeight: 2,
-                strokeColor: "#fff",
-                scale: 10,
-            }
-        });
+    // Center marker (Malwana)
+    var centerIcon = L.divIcon({
+        className: '',
+        html: '<div style="width:18px;height:18px;background:#f0a500;border:3px solid white;border-radius:50%;box-shadow:0 0 6px rgba(0,0,0,0.4);"></div>',
+        iconAnchor: [9, 9],
+    });
 
-        new google.maps.Circle({
-            map: map,
-            center: malwana,
-            radius: 25000,
-            strokeColor: "#1a6b3a",
-            strokeOpacity: 0.4,
-            strokeWeight: 2,
-            fillColor: "#1a6b3a",
-            fillOpacity: 0.05,
-        });
+    L.marker([6.872874, 80.699653], { icon: centerIcon })
+        .addTo(map)
+        .bindPopup('<strong>Malwana (Center)</strong>');
 
-        var infoWindow = new google.maps.InfoWindow();
+    // 25km radius circle
+    L.circle([6.872874, 80.699653], {
+        radius: 25000,
+        color: '#1a6b3a',
+        weight: 2,
+        opacity: 0.4,
+        fillColor: '#1a6b3a',
+        fillOpacity: 0.05,
+    }).addTo(map);
 
-        attractionsData.forEach(function(attraction) {
-            if (!attraction.lat || !attraction.lng) return;
+    // Custom green marker icon for attractions
+    var attractionIcon = L.divIcon({
+        className: '',
+        html: '<div style="width:14px;height:14px;background:#1a6b3a;border:2px solid white;border-radius:50%;box-shadow:0 0 5px rgba(0,0,0,0.3);"></div>',
+        iconAnchor: [7, 7],
+    });
 
-            var marker = new google.maps.Marker({
-                position: { lat: parseFloat(attraction.lat), lng: parseFloat(attraction.lng) },
-                map: map,
-                title: attraction.name,
-                icon: {
-                    path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
-                    fillColor: "#1a6b3a",
-                    fillOpacity: 1,
-                    strokeWeight: 1,
-                    strokeColor: "#fff",
-                    scale: 7,
-                }
-            });
+    // Add attraction markers
+    attractionsData.forEach(function(attraction) {
+        if (!attraction.lat || !attraction.lng) return;
 
-            marker.addListener("click", function() {
-                infoWindow.setContent(
-                    '<div style="font-family: sans-serif; min-width: 180px;">' +
-                    '<strong>' + attraction.name + '</strong><br>' +
-                    '<span style="color: #1a6b3a;">' + attraction.category + '</span><br>' +
-                    '<span style="color: #888;">' + attraction.distance + ' km from Malwana</span><br>' +
-                    '<a href="' + attraction.url + '" style="color: #1a6b3a; font-weight: bold;">View Details</a>' +
-                    '</div>'
-                );
-                infoWindow.open(map, marker);
-            });
-        });
-    }
-</script>
-<script async defer
-    src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&callback=initMap">
+        var marker = L.marker(
+            [parseFloat(attraction.lat), parseFloat(attraction.lng)],
+            { icon: attractionIcon }
+        ).addTo(map);
+
+        marker.bindPopup(
+            '<div style="font-family: sans-serif; min-width: 180px;">' +
+            '<strong>' + attraction.name + '</strong><br>' +
+            '<span style="color:#1a6b3a;">' + attraction.category + '</span><br>' +
+            '<span style="color:#888;">' + attraction.distance + ' km from Malwana</span><br><br>' +
+            '<a href="' + attraction.url + '" style="color:#1a6b3a; font-weight:bold;">View Details →</a>' +
+            '</div>'
+        );
+    });
 </script>
 @endsection
