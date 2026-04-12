@@ -3,7 +3,116 @@
 @section('title', 'Dashboard - Admin')
 @section('page-title', 'Dashboard')
 
+@section('styles')
+<style>
+    /* ── Hero Slideshow ── */
+    .hero-slideshow {
+        position: relative;
+        width: 100%;
+        height: 260px;
+        border-radius: 18px;
+        overflow: hidden;
+        margin-bottom: 32px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    }
+
+    .hero-slide {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transform: scale(1.06);
+        transition: opacity 1.4s cubic-bezier(0.4,0,0.2,1),
+                    transform 6s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .hero-slide.active {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    /* dark gradient overlay so text pops */
+    .hero-slide::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            to bottom,
+            rgba(0,0,0,0.08) 0%,
+            rgba(0,0,0,0.45) 100%
+        );
+    }
+
+    .hero-content {
+        position: absolute;
+        bottom: 28px;
+        left: 32px;
+        z-index: 2;
+        color: #fff;
+    }
+    .hero-content h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.7rem;
+        font-weight: 700;
+        margin: 0 0 4px;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        letter-spacing: 0.3px;
+    }
+    .hero-content p {
+        font-size: 0.88rem;
+        opacity: 0.88;
+        margin: 0;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    }
+
+    /* Dot indicators */
+    .hero-dots {
+        position: absolute;
+        bottom: 16px;
+        right: 20px;
+        z-index: 2;
+        display: flex;
+        gap: 7px;
+    }
+    .hero-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.45);
+        cursor: pointer;
+        transition: background 0.3s, transform 0.3s;
+    }
+    .hero-dot.active {
+        background: #fff;
+        transform: scale(1.3);
+    }
+</style>
+@endsection
+
 @section('content')
+
+{{-- ── Hero Slideshow ── --}}
+<div class="hero-slideshow" id="heroSlideshow">
+
+    <div class="hero-slide active"
+         style="background-image: url('{{ asset('images/attractions/naturedashboard01.png') }}')">
+    </div>
+
+    <div class="hero-slide"
+         style="background-image: url('{{ asset('images/attractions/naturedashboard02.png') }}')">
+    </div>
+
+    <div class="hero-content">
+        <h2 id="heroTitle">Welcome to TripMalwana</h2>
+        <p id="heroSubtitle">Manage attractions · Monitor coverage · Explore the region</p>
+    </div>
+
+    <div class="hero-dots">
+        <div class="hero-dot active" data-index="0"></div>
+        <div class="hero-dot"        data-index="1"></div>
+    </div>
+</div>
 
 <div class="row g-4 mb-4">
     <div class="col-md-4">
@@ -96,4 +205,26 @@
     </div>
 </div>
 
+@endsection
+
+@section('scripts')
+<script>
+    const slides = document.querySelectorAll('.hero-slide');
+    const dots   = document.querySelectorAll('.hero-dot');
+    let current  = 0;
+
+    function goTo(index) {
+        slides[current].classList.remove('active');
+        dots[current].classList.remove('active');
+        current = index;
+        slides[current].classList.add('active');
+        dots[current].classList.add('active');
+    }
+
+    // Auto-advance every 5 seconds
+    setInterval(() => goTo((current + 1) % slides.length), 5000);
+
+    // Click the dots to jump to a specific slide
+    dots.forEach(dot => dot.addEventListener('click', () => goTo(+dot.dataset.index)));
+</script>
 @endsection

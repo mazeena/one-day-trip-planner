@@ -151,14 +151,14 @@
 
         /* Search bar */
         .search-bar {
-            background: #fff;
-            border-radius: 50px;
-            padding: 6px 6px 6px 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    background: #fff;
+    border-radius: 500px !important;
+    padding: 6px 6px 6px 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
         .search-bar input {
             border: none;
