@@ -2,140 +2,26 @@
 
 @section('title', 'Explore Attractions - TripMalwana')
 
-@section('styles')
-<style>
-    /* ── Hero Slideshow ── */
-    .hero-slideshow {
-        position: relative;
-        width: 100%;
-        height: 480px;
-        overflow: hidden;
-        margin-bottom: 40px;
-    }
-
-    .hero-slide {
-        position: absolute;
-        inset: 0;
-        background-size: cover;
-        background-position: center;
-        opacity: 0;
-        transform: scale(1.06);
-        transition: opacity 1.4s cubic-bezier(0.4,0,0.2,1),
-                    transform 6s cubic-bezier(0.4,0,0.2,1);
-    }
-
-    .hero-slide.active {
-        opacity: 1;
-        transform: scale(1);
-    }
-
-    /* dark gradient overlay */
-    .hero-slide::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-            to bottom,
-            rgba(0,0,0,0.15) 0%,
-            rgba(0,0,0,0.60) 100%
-        );
-    }
-
-    /* Text & search on top of slideshow */
-    .hero-overlay {
-        position: absolute;
-        inset: 0;
-        z-index: 2;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 0 20px;
-        color: #fff;
-    }
-
-    .hero-overlay h1 {
-        font-family: 'Playfair Display', serif;
-        font-size: 2.8rem;
-        font-weight: 700;
-        text-shadow: 0 2px 12px rgba(0,0,0,0.5);
-        margin-bottom: 12px;
-    }
-
-    .hero-overlay p {
-        font-size: 1.15rem;
-        opacity: 0.92;
-        text-shadow: 0 1px 6px rgba(0,0,0,0.4);
-        margin-bottom: 28px;
-    }
-
-    /* Dot indicators */
-    .hero-dots {
-        position: absolute;
-        bottom: 18px;
-        right: 24px;
-        z-index: 3;
-        display: flex;
-        gap: 8px;
-    }
-
-    .hero-dot {
-        width: 9px;
-        height: 9px;
-        border-radius: 100%;
-        background: rgba(255,255,255,0.45);
-        cursor: pointer;
-        transition: background 0.3s, transform 0.3s;
-    }
-
-    .hero-dot.active {
-        background: #fff;
-        transform: scale(1.3);
-    }
-</style>
-@endsection
-
 @section('content')
 
-{{-- ── Hero Slideshow ── --}}
-<div class="hero-slideshow">
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container text-center">
+        <h1><i class="fas fa-compass me-3"></i>One-Day Trip Planner</h1>
+        <p class="mb-4">Discover the best tourist attractions within 25km of Malwana, Sri Lanka</p>
 
-    <div class="hero-slide active"
-         style="background-image: url('{{ asset('images/attractions/naturedashboard01.png') }}')">
-    </div>
-
-    <div class="hero-slide"
-         style="background-image: url('{{ asset('images/attractions/naturedashboard02.png') }}')">
-    </div>
-
-    {{-- Overlay with title + search --}}
-    <div class="hero-overlay">
-        <h1><i class="fas fa-compass me-3"></i>Your Perfect Day Trip Starts Here</h1>
-        <p>Discover the best attractions within 25km of Malwana, Sri Lanka-Journey Through Malwana</p>
-
+        <!-- Search Bar -->
         <form method="GET" action="{{ route('attractions.index') }}">
             <div class="row justify-content-center">
                 <div class="col-md-7">
                     <div class="search-bar">
                         <i class="fas fa-search text-muted"></i>
-                        <input
-                            type="text"
-                            name="search"
-                            value="{{ request('search') }}"
-                            placeholder="Search attractions..."
-                        >
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search attractions...">
                         <button type="submit" class="btn btn-accent rounded-pill px-4">Search</button>
                     </div>
                 </div>
             </div>
         </form>
-    </div>
-
-    {{-- Dot indicators --}}
-    <div class="hero-dots">
-        <div class="hero-dot active" data-index="0"></div>
-        <div class="hero-dot"        data-index="1"></div>
     </div>
 </div>
 
@@ -252,26 +138,4 @@
 
 </div>
 
-@endsection
-
-@section('scripts')
-<script>
-    const slides = document.querySelectorAll('.hero-slide');
-    const dots   = document.querySelectorAll('.hero-dot');
-    let current  = 0;
-
-    function goTo(index) {
-        slides[current].classList.remove('active');
-        dots[current].classList.remove('active');
-        current = index;
-        slides[current].classList.add('active');
-        dots[current].classList.add('active');
-    }
-
-    // Auto-advance every 5 seconds
-    setInterval(() => goTo((current + 1) % slides.length), 5000);
-
-    // Click dots to jump to a slide
-    dots.forEach(dot => dot.addEventListener('click', () => goTo(+dot.dataset.index)));
-</script>
 @endsection

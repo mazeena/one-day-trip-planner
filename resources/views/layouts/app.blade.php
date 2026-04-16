@@ -151,14 +151,14 @@
 
         /* Search bar */
         .search-bar {
-    background: #fff;
-    border-radius: 500px !important;
-    padding: 6px 6px 6px 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+            background: #fff;
+            border-radius: 50px;
+            padding: 6px 6px 6px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
         .search-bar input {
             border: none;
@@ -204,15 +204,36 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('attractions.*') ? 'active' : '' }}" href="{{ route('attractions.index') }}">
-                        <i class="fas fa-binoculars me-1"></i> Attractions
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('attractions.map') ? 'active' : '' }}" href="{{ route('attractions.map') }}">
                         <i class="fas fa-map me-1"></i> Map View
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('trip.*') ? 'active' : '' }}" href="{{ route('trip.plan') }}">
+                        <i class="fas fa-route me-1"></i> Plan My Trip
+                    </a>
+                </li>
+                @auth
+                    <li class="nav-item">
+                        <span class="nav-link" style="color: #f0a500;">
+                            <i class="fas fa-user me-1"></i> {{ Auth::user()->name }}
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                            @csrf
+                            <button type="submit" class="nav-link btn btn-link" style="color:rgba(255,255,255,0.85);">
+                                <i class="fas fa-sign-out-alt me-1"></i> Sign Out
+                            </button>
+                        </form>
+                    </li>
+                @else
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('register') }}" style="color: #f0a500; font-weight: 600;">
+                            <i class="fas fa-user-plus me-1"></i> Register
+                        </a>
+                    </li>
+                @endauth
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('admin.login') }}">
                         <i class="fas fa-lock me-1"></i> Admin
