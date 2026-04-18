@@ -269,9 +269,30 @@
                 </div>
             </main>
         </div>
+        </div>
+    </div>
+</div>
 
-        @if (Route::has('login'))
-            <div class="h-14.5 hidden lg:block"></div>
-        @endif
-    </body>
-</html>
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let heroCurrent = 0;
+        const heroSlides = document.querySelectorAll('.hero-slide');
+        const heroDots   = document.querySelectorAll('.hero-dot');
+
+        function heroGoTo(n) {
+            heroSlides[heroCurrent].classList.remove('active');
+            heroDots[heroCurrent].classList.remove('active');
+            heroCurrent = n;
+            heroSlides[heroCurrent].classList.add('active');
+            heroDots[heroCurrent].classList.add('active');
+        }
+
+        setInterval(() => heroGoTo((heroCurrent + 1) % heroSlides.length), 4500);
+
+        window.heroGoTo = heroGoTo;
+    });
+</script>
+@endsection

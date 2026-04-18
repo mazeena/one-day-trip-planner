@@ -8,7 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        body {
+       body {
             font-family: 'Lato', sans-serif;
             background: linear-gradient(135deg, #1a6b3a 0%, #2d8a52 60%, #1a6b3a 100%);
             min-height: 100vh;

@@ -31,7 +31,6 @@
             font-family: 'Playfair Display', serif;
         }
 
-        /* Navbar */
         .navbar {
             background: var(--primary) !important;
             box-shadow: 0 2px 10px rgba(0,0,0,0.15);
@@ -57,7 +56,6 @@
             color: var(--accent) !important;
         }
 
-        /* Buttons */
         .btn-primary {
             background-color: var(--primary);
             border-color: var(--primary);
@@ -80,7 +78,6 @@
             color: #fff;
         }
 
-        /* Cards */
         .card {
             border: none;
             border-radius: 12px;
@@ -99,7 +96,6 @@
             object-fit: cover;
         }
 
-        /* Badge */
         .badge-category {
             background-color: var(--primary);
             color: #fff;
@@ -109,7 +105,6 @@
             font-weight: 600;
         }
 
-        /* Distance badge */
         .badge-distance {
             background-color: var(--accent);
             color: #fff;
@@ -118,7 +113,6 @@
             font-size: 0.75rem;
         }
 
-        /* Footer */
         footer {
             background: var(--primary-dark);
             color: rgba(255,255,255,0.8);
@@ -131,7 +125,6 @@
             text-decoration: none;
         }
 
-        /* Hero */
         .hero-section {
             background: linear-gradient(135deg, var(--primary) 0%, #2d8a52 100%);
             color: #fff;
@@ -149,7 +142,6 @@
             opacity: 0.9;
         }
 
-        /* Search bar */
         .search-bar {
             background: #fff;
             border-radius: 50px;
@@ -226,12 +218,6 @@
                                 <i class="fas fa-sign-out-alt me-1"></i> Sign Out
                             </button>
                         </form>
-                    </li>
-                @else
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('register') }}" style="color: #f0a500; font-weight: 600;">
-                            <i class="fas fa-user-plus me-1"></i> Register
-                        </a>
                     </li>
                 @endauth
                 <li class="nav-item">

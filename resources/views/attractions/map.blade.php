@@ -26,6 +26,17 @@
         padding: 40px 0 30px;
         margin-bottom: 30px;
     }
+    .transport-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .t-btn {
+        flex: 1; min-width: 80px; padding: 10px 6px;
+        border: 2px solid #ddd; border-radius: 10px;
+        background: #fff; cursor: pointer; text-align: center;
+        font-size: 0.8rem; font-weight: 600; color: #555;
+        transition: all 0.2s;
+    }
+    .t-btn i { display: block; font-size: 1.3rem; margin-bottom: 4px; }
+    .t-btn:hover { border-color: #1a6b3a; color: #1a6b3a; }
+    .t-btn.active { border-color: #1a6b3a; background: #1a6b3a; color: #fff; }
 </style>
 @endsection
 
@@ -50,31 +61,68 @@
             </p>
         </div>
 
-        {{-- Sidebar List --}}
+        {{-- Sidebar --}}
         <div class="col-lg-4">
-            <div class="card" style="max-height: 540px; overflow-y: auto;">
-                <div class="card-header bg-white fw-bold">
+
+            {{-- Transport Mode --}}
+            <div class="card p-3 mb-3" style="border-radius:14px; border:none; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+                <h6 class="fw-bold mb-3"><i class="fas fa-route me-2 text-success"></i>Transport Mode</h6>
+                <div class="transport-bar">
+                    <button class="t-btn active" onclick="setMode(this,'driving')" title="Driving">
+                        <i class="fas fa-car"></i> Drive
+                    </button>
+                    <button class="t-btn" onclick="setMode(this,'walking')" title="Walking">
+                        <i class="fas fa-person-walking"></i> Walk
+                    </button>
+                    <button class="t-btn" onclick="setMode(this,'transit')" title="Transit">
+                        <i class="fas fa-bus"></i> Transit
+                    </button>
+                    <button class="t-btn" onclick="setMode(this,'cycling')" title="Cycling">
+                        <i class="fas fa-bicycle"></i> Cycle
+                    </button>
+                </div>
+                <p class="text-muted mb-0" style="font-size:0.8rem;">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Click <strong>Navigate</strong> on an attraction to open directions in Google Maps.
+                </p>
+            </div>
+
+            {{-- Attraction List --}}
+            <div class="card" style="max-height:480px; overflow-y:auto; border-radius:14px; border:none; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+                <div class="card-header bg-white fw-bold" style="border-radius:14px 14px 0 0;">
                     <i class="fas fa-list me-2 text-success"></i>Attractions ({{ $attractions->count() }})
                 </div>
                 <div class="list-group list-group-flush">
                     @foreach($attractions as $attraction)
-                    <a href="{{ route('attractions.show', $attraction->attraction_id) }}"
-                       class="list-group-item list-group-item-action attraction-list-item py-3">
+                    <div class="list-group-item attraction-list-item py-3"
+                         onclick="focusAttraction({{ $attraction->attraction_id }})">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <strong style="font-size: 0.95rem;">{{ $attraction->name }}</strong><br>
+                                <strong style="font-size:0.95rem;">{{ $attraction->name }}</strong><br>
                                 <small class="text-muted">{{ $attraction->category->category_name }}</small>
                             </div>
-                            <span class="badge" style="background: #f0a500; color: white; border-radius: 20px; white-space: nowrap;">
+                            <span class="badge" style="background:#f0a500;color:white;border-radius:20px;white-space:nowrap;">
                                 {{ $attraction->distance }}km
                             </span>
                         </div>
-                    </a>
+                        @if($attraction->latitude && $attraction->longitude)
+                        <div class="mt-2 d-flex gap-2">
+                            <a href="{{ route('attractions.show', $attraction->attraction_id) }}"
+                               class="btn btn-sm btn-outline-primary" style="font-size:0.75rem;">
+                                <i class="fas fa-eye me-1"></i>Details
+                            </a>
+                            <button class="btn btn-sm btn-success" style="font-size:0.75rem;"
+                                onclick="event.stopPropagation(); navigateTo({{ $attraction->latitude }}, {{ $attraction->longitude }}, '{{ addslashes($attraction->name) }}')">
+                                <i class="fas fa-directions me-1"></i>Navigate
+                            </button>
+                        </div>
+                        @endif
+                    </div>
                     @endforeach
                 </div>
             </div>
-        </div>
 
+        </div>
     </div>
 </div>
 
@@ -83,41 +131,53 @@
 @section('scripts')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-    var attractionsData = {!! json_encode($attractions->map(function($a) {
-        return [
-            'id'       => $a->attraction_id,
-            'name'     => $a->name,
-            'category' => $a->category->category_name,
-            'distance' => $a->distance,
-            'location' => $a->location,
-            'lat'      => $a->latitude,
-            'lng'      => $a->longitude,
-            'url'      => route('attractions.show', $a->attraction_id),
-        ];
-    })) !!};
+    const attractionsData = {!! json_encode($attractionsJson) !!};
 
-    // Initialize map centered on Malwana
-    var map = L.map('map').setView([6.872874, 80.699653], 11);
+    let currentMode = 'driving';
+    let markers = {};
 
-    // OpenStreetMap tile layer — FREE, no API key required
+    function setMode(btn, mode) {
+        document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentMode = mode;
+    }
+
+    function navigateTo(lat, lng, name) {
+        const modeMap = { driving: 'driving', walking: 'walking', transit: 'transit', cycling: 'bicycling' };
+        const gmMode = modeMap[currentMode] || 'driving';
+        window.open(
+            `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=${gmMode}`,
+            '_blank'
+        );
+    }
+
+    function focusAttraction(id) {
+        const marker = markers[id];
+        if (marker) {
+            map.setView(marker.getLatLng(), 15);
+            marker.openPopup();
+        }
+    }
+
+    // Init Leaflet map
+    const map = L.map('map').setView([6.9800, 79.9900], 11);
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 18,
+        maxZoom: 19,
     }).addTo(map);
 
-    // Center marker (Malwana)
-    var centerIcon = L.divIcon({
-        className: '',
-        html: '<div style="width:18px;height:18px;background:#f0a500;border:3px solid white;border-radius:50%;box-shadow:0 0 6px rgba(0,0,0,0.4);"></div>',
-        iconAnchor: [9, 9],
-    });
-
-    L.marker([6.872874, 80.699653], { icon: centerIcon })
-        .addTo(map)
-        .bindPopup('<strong>Malwana (Center)</strong>');
+    // Malwana center marker
+    L.circleMarker([6.9800, 79.9900], {
+        radius: 10,
+        fillColor: '#f0a500',
+        color: '#fff',
+        weight: 2,
+        fillOpacity: 1,
+    }).addTo(map).bindPopup('<strong>Malwana (Center)</strong>');
 
     // 25km radius circle
-    L.circle([6.872874, 80.699653], {
+    L.circle([6.9800, 79.9900], {
         radius: 25000,
         color: '#1a6b3a',
         weight: 2,
@@ -126,30 +186,47 @@
         fillOpacity: 0.05,
     }).addTo(map);
 
-    // Custom green marker icon for attractions
-    var attractionIcon = L.divIcon({
+    // Custom green icon
+    const greenIcon = L.divIcon({
         className: '',
-        html: '<div style="width:14px;height:14px;background:#1a6b3a;border:2px solid white;border-radius:50%;box-shadow:0 0 5px rgba(0,0,0,0.3);"></div>',
+        html: `<div style="
+            width:14px; height:14px;
+            background:#1a6b3a;
+            border:2px solid #fff;
+            border-radius:50%;
+            box-shadow:0 2px 6px rgba(0,0,0,0.3);
+        "></div>`,
+        iconSize: [14, 14],
         iconAnchor: [7, 7],
+        popupAnchor: [0, -7],
     });
 
     // Add attraction markers
-    attractionsData.forEach(function(attraction) {
-        if (!attraction.lat || !attraction.lng) return;
+    attractionsData.forEach(function(a) {
+        if (!a.lat || !a.lng) return;
 
-        var marker = L.marker(
-            [parseFloat(attraction.lat), parseFloat(attraction.lng)],
-            { icon: attractionIcon }
-        ).addTo(map);
+        const marker = L.marker([parseFloat(a.lat), parseFloat(a.lng)], { icon: greenIcon })
+            .addTo(map)
+            .bindPopup(`
+                <div style="font-family:sans-serif; min-width:200px;">
+                    <strong style="font-size:1rem;">${a.name}</strong><br>
+                    <span style="color:#1a6b3a; font-size:0.85rem;">${a.category}</span><br>
+                    <span style="color:#888; font-size:0.82rem;">📍 ${a.distance} km from Malwana</span>
+                    <div style="margin-top:8px; display:flex; gap:8px;">
+                        <a href="${a.url}" style="color:#1a6b3a; font-weight:bold; font-size:0.82rem;">
+                            View Details →
+                        </a>
+                        <span style="color:#ccc;">|</span>
+                        <a href="#"
+                           onclick="navigateTo(${a.lat},${a.lng},'${a.name.replace(/'/g,"\\'")}'); return false;"
+                           style="color:#f0a500; font-weight:bold; font-size:0.82rem;">
+                            Navigate →
+                        </a>
+                    </div>
+                </div>
+            `);
 
-        marker.bindPopup(
-            '<div style="font-family: sans-serif; min-width: 180px;">' +
-            '<strong>' + attraction.name + '</strong><br>' +
-            '<span style="color:#1a6b3a;">' + attraction.category + '</span><br>' +
-            '<span style="color:#888;">' + attraction.distance + ' km from Malwana</span><br><br>' +
-            '<a href="' + attraction.url + '" style="color:#1a6b3a; font-weight:bold;">View Details →</a>' +
-            '</div>'
-        );
+        markers[a.id] = marker;
     });
 </script>
 @endsection

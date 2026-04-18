@@ -4,15 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TripItinerary extends Model
+class Trip extends Model
 {
     protected $fillable = ['user_id', 'trip_name', 'trip_date'];
 
     public function attractions()
     {
-        return $this->belongsToMany(Attraction::class, 'trip_attractions', 'trip_id', 'attraction_id')
-                    ->withPivot('order')
-                    ->orderBy('trip_attractions.order');
+        return $this->belongsToMany(Attraction::class, 'trip_attraction', 'trip_id', 'attraction_id');
     }
 
     public function user()

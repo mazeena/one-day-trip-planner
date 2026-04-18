@@ -63,7 +63,8 @@ class AdminController extends Controller
     public function attractionIndex()
     {
         $attractions = Attraction::with('category')->orderBy('name')->get();
-        return view('admin.attractions.index', compact('attractions'));
+        $categories = Category::orderBy('name')->get();
+        return view('admin.attractions.index', compact('attractions', 'categories'));
     }
 
     // Show create form
@@ -122,7 +123,6 @@ class AdminController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            // Delete old image if exists
             if ($attraction->image && file_exists(public_path('images/attractions/' . $attraction->image))) {
                 unlink(public_path('images/attractions/' . $attraction->image));
             }
@@ -130,7 +130,6 @@ class AdminController extends Controller
             $request->file('image')->move(public_path('images/attractions'), $imageName);
             $validated['image'] = $imageName;
         } else {
-            // No new image uploaded — keep the existing one
             unset($validated['image']);
         }
 

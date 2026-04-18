@@ -104,9 +104,11 @@
             <i class="fas fa-external-link-alt me-2"></i> View Site
         </a>
         <form method="POST" action="{{ route('admin.logout') }}">
-            @csrf
-            <button type="submit" class="nav-link btn btn-link text-start w-100" style="border: none; background: none;">
-                <i class="fas fa-sign-out-alt me-2"></i> Logout
+    @csrf
+    <button type="submit" class="dropdown-item">
+        <i class="fas fa-sign-out-alt me-1"></i> Logout
+    </button>
+</form>
             </button>
         </form>
     </nav>
