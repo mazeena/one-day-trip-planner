@@ -4,11 +4,32 @@
 
 @section('styles')
 <style>
+    .hero-slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+}
+
+.hero-slide::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(124, 58, 237, 0.45);
+    z-index: 1;
+}
+
+.hero-overlay {
+    z-index: 2;
+    position: absolute;
+}
     .hero-slideshow {
         position: relative;
         width: 100%;
         height: 520px;
         overflow: hidden;
+       background-color: rgb(76, 0, 255);
     }
 
     .hero-slide {
@@ -27,16 +48,8 @@
         transform: scale(1);
     }
 
-    .hero-slide::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-            to bottom,
-            rgba(0,0,0,0.25) 0%,
-            rgba(0,0,0,0.65) 100%
-        );
-    }
+    
+    
 
     .hero-overlay {
         position: absolute;
@@ -230,15 +243,15 @@
 <div class="hero-slideshow">
 
     <div class="hero-slide active"
-         style="background-image: url('{{ asset('images/attractions/naturedashboard01.png') }}')">
+         style="background-image: url('{{ asset('images/hero/malwana1.png') }}')">
     </div>
 
     <div class="hero-slide"
-         style="background-image: url('{{ asset('images/attractions/naturedashboard02.png') }}')">
+         style="background-image: url('{{ asset('images/hero/malwana2.png') }}')">
     </div>
 
     <div class="hero-slide"
-         style="background-image: url('{{ asset('images/attractions/naturedashboard01.png') }}')">
+         style="background-image: url('{{ asset('images/hero/malwana3.png') }}')">
     </div>
 
     <div class="hero-overlay">
