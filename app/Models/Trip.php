@@ -8,7 +8,7 @@ class Trip extends Model
 {
     protected $table = 'trip_itineraries';
 
-    protected $fillable = ['user_id', 'trip_name', 'trip_date'];
+    protected $fillable = ['user_id', 'trip_name', 'trip_date', 'transport_mode'];
 
     public function attractions()
     {

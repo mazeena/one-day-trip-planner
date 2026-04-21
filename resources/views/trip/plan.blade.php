@@ -302,6 +302,31 @@
                     <label class="form-label fw-semibold">Trip Date (optional)</label>
                     <input type="date" name="trip_date" class="form-control form-control-lg rounded-3">
                 </div>
+                <div class="mb-4">
+                    <label class="form-label fw-semibold"><i class="fas fa-car me-1"></i> Transportation Mode</label>
+                    <div class="d-flex gap-3 flex-wrap mt-2">
+                        <label class="attraction-checkbox d-flex align-items-center gap-2 px-3 py-2" style="width:auto;">
+                            <input type="radio" name="transport_mode" value="walking" required>
+                            <i class="fas fa-walking text-success"></i> Walking
+                        </label>
+                        <label class="attraction-checkbox d-flex align-items-center gap-2 px-3 py-2" style="width:auto;">
+                            <input type="radio" name="transport_mode" value="cycling">
+                            <i class="fas fa-bicycle text-success"></i> Cycling
+                        </label>
+                        <label class="attraction-checkbox d-flex align-items-center gap-2 px-3 py-2" style="width:auto;">
+                            <input type="radio" name="transport_mode" value="car">
+                            <i class="fas fa-car text-success"></i> Car
+                        </label>
+                        <label class="attraction-checkbox d-flex align-items-center gap-2 px-3 py-2" style="width:auto;">
+                            <input type="radio" name="transport_mode" value="bus">
+                            <i class="fas fa-bus text-success"></i> Bus
+                        </label>
+                        <label class="attraction-checkbox d-flex align-items-center gap-2 px-3 py-2" style="width:auto;">
+                            <input type="radio" name="transport_mode" value="tuk">
+                            <i class="fas fa-taxi text-success"></i> Tuk Tuk
+                        </label>
+                    </div>
+                </div>
                 <label class="form-label fw-semibold mb-3">
                     <i class="fas fa-map-pin me-1"></i> Select Attractions
                 </label>
