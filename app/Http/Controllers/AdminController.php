@@ -63,7 +63,8 @@ class AdminController extends Controller
     public function attractionIndex()
     {
         $attractions = Attraction::with('category')->orderBy('name')->get();
-        return view('admin.attractions.index', compact('attractions'));
+        $categories = Category::all(); // ✅ Added this line
+        return view('admin.attractions.index', compact('attractions', 'categories')); // ✅ Added 'categories'
     }
 
     // Show create form
@@ -135,7 +136,7 @@ class AdminController extends Controller
         }
 
         $attraction->update($validated);
-        return redirect()->route('admin.attractions.index')->with('success', 'Attraction updated successfully!');
+       return redirect()->route('admin.attractions.edit', $id)->with('success', 'Attraction updated successfully!');
     }
 
     // Delete attraction

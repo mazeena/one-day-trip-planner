@@ -227,12 +227,6 @@
                             </button>
                         </form>
                     </li>
-                @else
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('register') }}" style="color: #f0a500; font-weight: 600;">
-                            <i class="fas fa-user-plus me-1"></i> Register
-                        </a>
-                    </li>
                 @endauth
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('admin.login') }}">

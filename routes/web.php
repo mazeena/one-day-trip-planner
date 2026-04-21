@@ -3,33 +3,40 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttractionController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\UserAuthController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\TripController;
+use App\Http\Controllers\Auth\LoginController;
 
-// Public routes
-Route::get('/', [AttractionController::class, 'welcome'])->name('home');
+Route::get('/', fn() => view('home'))->name('home');
+
 Route::get('/attractions', [AttractionController::class, 'index'])->name('attractions.index');
 Route::get('/attractions/{id}', [AttractionController::class, 'show'])->name('attractions.show');
 Route::get('/map', [AttractionController::class, 'map'])->name('attractions.map');
 
-// User auth routes
-Route::get('/login', [UserAuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [UserAuthController::class, 'login'])->name('login.post');
-Route::get('/register', [UserAuthController::class, 'showRegister'])->name('register');
-Route::post('/register', [UserAuthController::class, 'register'])->name('register.post');
-Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout');
-
-// Protected trip planning routes
-Route::middleware('auth')->group(function () {
-    Route::get('/plan-my-trip', [UserAuthController::class, 'planTrip'])->name('trip.plan');
-    Route::post('/plan-my-trip', [UserAuthController::class, 'saveTrip'])->name('trip.save');
-    Route::delete('/plan-my-trip/{id}', [UserAuthController::class, 'deleteTrip'])->name('trip.delete');
+Route::middleware('guest')->group(function () {
+    Route::get('/login', fn() => view('auth.login'))->name('login');
+    Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+    Route::get('/register', fn() => view('auth.register'))->name('register');
+    Route::post('/register', [LoginController::class, 'register'])->name('register.post');
 });
 
-// Admin routes
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
+
+Route::get('/trip/plan', [TripController::class, 'index'])->name('trip.plan');
+Route::middleware('auth')->group(function () {
+    Route::post('/trip/save', [TripController::class, 'save'])->name('trip.save');
+    Route::delete('/trip/{id}', [TripController::class, 'destroy'])->name('trip.delete');
+});
+
+Route::middleware('admin.auth')->group(function () {
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::put('/reviews/{id}', [ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+});
+
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AdminController::class, 'showLogin'])->name('login');
     Route::post('/login', [AdminController::class, 'login'])->name('login.post');
-
     Route::middleware('admin.auth')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
         Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
