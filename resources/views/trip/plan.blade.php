@@ -327,6 +327,18 @@
                         </label>
                     </div>
                 </div>
+                <div class="mb-4">
+                    <label class="form-label fw-semibold"><i class="fas fa-map-marker-alt me-1"></i> Starting Location</label>
+                    <div class="position-relative">
+                        <input type="text" id="startingLocationInput" name="starting_location"
+                               class="form-control form-control-lg rounded-3"
+                               placeholder="e.g. Colombo Fort, Kandy..." autocomplete="off" required>
+                        <div class="search-suggestions" id="startingSuggestions"></div>
+                    </div>
+                    <input type="hidden" name="start_lat" id="start_lat">
+                    <input type="hidden" name="start_lng" id="start_lng">
+                    <small class="text-muted"><i class="fas fa-info-circle me-1"></i>Type to search and select your starting point</small>
+                </div>
                 <label class="form-label fw-semibold mb-3">
                     <i class="fas fa-map-pin me-1"></i> Select Attractions
                 </label>
@@ -560,6 +572,43 @@
             if (checkbox.checked && a && a.lat && a.lng) map.setView([a.lat, a.lng], 14);
         });
     });
+
+    // Starting location autocomplete
+    const startInput = document.getElementById('startingLocationInput');
+    const startSuggestions = document.getElementById('startingSuggestions');
+    let startTimer = null;
+
+    startInput.addEventListener('input', function() {
+        clearTimeout(startTimer);
+        const q = startInput.value.trim();
+        if (q.length < 3) { startSuggestions.style.display = 'none'; return; }
+        startTimer = setTimeout(function() {
+            fetch('https://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + encodeURIComponent(q),
+                  { headers: { 'Accept-Language': 'en' } })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    startSuggestions.innerHTML = '';
+                    if (!data.length) { startSuggestions.style.display = 'none'; return; }
+                    data.forEach(function(item) {
+                        const div = document.createElement('div');
+                        div.className = 'search-suggestion-item';
+                        div.textContent = item.display_name;
+                        div.addEventListener('click', function() {
+                            startInput.value = item.display_name;
+                            document.getElementById('start_lat').value = item.lat;
+                            document.getElementById('start_lng').value = item.lon;
+                            startSuggestions.style.display = 'none';
+                            placeSearchMarker(parseFloat(item.lat), parseFloat(item.lon), 'Starting: ' + item.display_name);
+                            map.setView([parseFloat(item.lat), parseFloat(item.lon)], 12);
+                        });
+                        startSuggestions.appendChild(div);
+                    });
+                    startSuggestions.style.display = 'block';
+                }).catch(function() { startSuggestions.style.display = 'none'; });
+        }, 400);
+    });
     @endauth
 </script>
 @endsection
+
+

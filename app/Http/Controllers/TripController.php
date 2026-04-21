@@ -28,7 +28,8 @@ class TripController extends Controller
             'trip_date'        => 'nullable|date',
             'attraction_ids'   => 'required|array|min:1',
             'attraction_ids.*' => 'exists:attractions,attraction_id',
-            'transport_mode'   => 'required|in:walking,cycling,car,bus,tuk',
+            'transport_mode'    => 'required|in:walking,cycling,car,bus,tuk',
+            'starting_location' => 'required|string|max:500',
         ]);
 
         $trip = Trip::create([
