@@ -4,32 +4,21 @@
 
 @section('styles')
 <style>
-    .hero-slide {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    overflow: hidden;
-}
+    @import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
+    * { font-family: "Geist", sans-serif; }
 
-.hero-slide::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(124, 58, 237, 0.45);
-    z-index: 1;
-}
+    :root {
+        --primary: #1a6b3a;
+        --accent:  #f0a500;
+    }
 
-.hero-overlay {
-    z-index: 2;
-    position: absolute;
-}
+    /* Hero Slideshow */
     .hero-slideshow {
         position: relative;
         width: 100%;
         height: 520px;
         overflow: hidden;
-       background-color: rgb(76, 0, 255);
+        background-color: rgb(76, 0, 255);
     }
 
     .hero-slide {
@@ -48,8 +37,15 @@
         transform: scale(1);
     }
 
-    
-    
+    .hero-slide::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom,
+            rgba(10,30,15,0.45) 0%,
+            rgba(10,30,15,0.65) 100%);
+        z-index: 1;
+    }
 
     .hero-overlay {
         position: absolute;
@@ -107,7 +103,7 @@
     }
 
     .btn-hero-primary {
-        background: #f0a500;
+        background: var(--accent);
         color: #fff;
         border: none;
         border-radius: 50px;
@@ -143,6 +139,7 @@
         transform: translateY(-2px);
     }
 
+    /* Dot indicators */
     .hero-dots {
         position: absolute;
         bottom: 22px;
@@ -163,7 +160,7 @@
     }
 
     .hero-dot.active {
-        background: #f0a500;
+        background: var(--accent);
         transform: scale(1.3);
     }
 
@@ -179,8 +176,8 @@
         box-shadow: 0 2px 20px rgba(0,0,0,0.07);
         padding: 36px 28px;
         text-align: center;
-        transition: transform 0.2s, box-shadow 0.2s;
         height: 100%;
+        transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .feature-card:hover {
@@ -245,18 +242,16 @@
     <div class="hero-slide active"
          style="background-image: url('{{ asset('images/hero/malwana1.png') }}')">
     </div>
-
     <div class="hero-slide"
          style="background-image: url('{{ asset('images/hero/malwana2.png') }}')">
     </div>
-
     <div class="hero-slide"
          style="background-image: url('{{ asset('images/hero/malwana3.png') }}')">
     </div>
 
     <div class="hero-overlay">
         <h1>Welcome to TripMalwana</h1>
-        <p>Your one-day trip companion — discover the best attractions within 25km of Malwana, Sri Lanka.</p>
+        <p>Your one-day trip companion – discover the best attractions within 25km of Malwana, Sri Lanka.</p>
 
         <div class="hero-badges">
             <span class="hero-badge"><i class="fas fa-map-pin me-1"></i> 25km Radius</span>
@@ -346,7 +341,7 @@
                         <i class="fas fa-directions" style="color:#9b59b6;"></i>
                     </div>
                     <h5>Get Directions</h5>
-                    <p>Navigate directly to any attraction with one click — choose driving, walking, cycling, or transit mode.</p>
+                    <p>Navigate directly to any attraction with one click – choose driving, walking, cycling, or transit mode.</p>
                 </div>
             </div>
         </div>
