@@ -116,7 +116,7 @@
 
         <form method="GET" action="{{ route('attractions.index') }}">
             <div class="row justify-content-center">
-                <div class="col-md-7">
+                <div class="col-md-20">
                     <div class="search-bar">
                         <i class="fas fa-search text-muted"></i>
                         <input
@@ -125,7 +125,7 @@
                             value="{{ request('search') }}"
                             placeholder="Search attractions..."
                         >
-                        <button type="submit" class="btn btn-accent rounded-pill px-4">Search</button>
+                        <button type="submit" class="btn btn-accent rounded-pill px-5">Search</button>
                     </div>
                 </div>
             </div>
