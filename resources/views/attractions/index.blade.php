@@ -102,11 +102,11 @@
 <div class="hero-slideshow">
 
     <div class="hero-slide active"
-         style="background-image: url('{{ asset('images/attractions/naturedashboard01.png') }}')">
+         style="background-image: url('{{ asset('images/attractions/srilanka1.jpg') }}')">
     </div>
 
     <div class="hero-slide"
-         style="background-image: url('{{ asset('images/attractions/naturedashboard02.png') }}')">
+         style="background-image: url('{{ asset('images/attractions/srilanka2.jpg') }}')">
     </div>
 
     {{-- Overlay with title + search --}}

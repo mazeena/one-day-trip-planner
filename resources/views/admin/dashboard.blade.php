@@ -96,15 +96,15 @@
 <div class="hero-slideshow" id="heroSlideshow">
 
     <div class="hero-slide active"
-         style="background-image: url('{{ asset('images/attractions/naturedashboard01.png') }}')">
+         style="background-image: url('{{ asset('images/attractions/admin11.jpg') }}')">
     </div>
 
     <div class="hero-slide"
-         style="background-image: url('{{ asset('images/attractions/naturedashboard02.png') }}')">
+         style="background-image: url('{{ asset('images/attractions/admin12.jpg') }}')">
     </div>
 
     <div class="hero-content">
-        <h2 id="heroTitle">Welcome to TripMalwana</h2>
+        <h2 id="heroTitle"> TripMalwana</h2>
         <p id="heroSubtitle">Manage attractions · Monitor coverage · Explore the region</p>
     </div>
 
