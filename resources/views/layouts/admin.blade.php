@@ -52,6 +52,29 @@
         }
         .sidebar .nav-link i { width: 22px; }
 
+        /* Logout button styled as nav-link */
+        .sidebar .logout-btn {
+            color: rgba(255,255,255,0.75);
+            padding: 12px 20px;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+            background: none;
+            border-top: none;
+            border-right: none;
+            border-bottom: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            display: block;
+        }
+        .sidebar .logout-btn:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.08);
+            border-left-color: var(--accent);
+        }
+        .sidebar .logout-btn i { width: 22px; }
+
         /* Main content */
         .main-content {
             margin-left: var(--sidebar-w);
@@ -103,14 +126,15 @@
         <a class="nav-link" href="{{ route('home') }}" target="_blank">
             <i class="fas fa-external-link-alt me-2"></i> View Site
         </a>
+
+        {{-- Logout --}}
         <form method="POST" action="{{ route('admin.logout') }}">
-    @csrf
-    <button type="submit" class="dropdown-item">
-        <i class="fas fa-sign-out-alt me-1"></i> Logout
-    </button>
-</form>
+            @csrf
+            <button type="submit" class="logout-btn">
+                <i class="fas fa-sign-out-alt me-2"></i> Logout
             </button>
         </form>
+
     </nav>
 </div>
 
@@ -120,7 +144,9 @@
     <div class="topbar">
         <h6 class="mb-0 fw-bold">@yield('page-title', 'Dashboard')</h6>
         <div class="d-flex align-items-center gap-3">
-            <span class="text-muted small"><i class="fas fa-user-shield me-1"></i>{{ Auth::guard('admin')->user()->username }}</span>
+            <span class="text-muted small">
+                <i class="fas fa-user-shield me-1"></i>{{ Auth::guard('admin')->user()->username }}
+            </span>
         </div>
     </div>
 
