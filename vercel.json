@@ -1,1 +1,1 @@
-{"version":2,"routes":[{"src":"/(.*)","dest":"/api/index.php"}]}
+{"version":2,"buildCommand":null,"outputDirectory":null,"framework":null,"routes":[{"src":"/(.*)","dest":"/api/index.php"}]}
