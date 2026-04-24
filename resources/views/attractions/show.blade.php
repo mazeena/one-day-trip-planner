@@ -47,6 +47,10 @@
     .transport-btn i { display: block; font-size: 1.2rem; margin-bottom: 3px; }
     .transport-btn:hover { border-color: #1a6b3a; color: #1a6b3a; }
     .transport-btn.active { border-color: #1a6b3a; background: #1a6b3a; color: #fff; }
+
+    /* Location button */
+    #locateBtn { transition: all 0.3s; }
+    #locationStatus { font-size: 0.82rem; min-height: 20px; }
 </style>
 @endsection
 
@@ -158,6 +162,14 @@
             <!-- Transport Mode Selector -->
             <div class="info-card mb-3">
                 <h6 class="fw-bold mb-3"><i class="fas fa-route me-2 text-success"></i>Choose Transport Mode</h6>
+
+                <!-- Use My Location Button -->
+                <button id="locateBtn" onclick="fetchUserLocation()" class="btn btn-outline-success w-100 mb-2">
+                    <i class="fas fa-location-crosshairs me-2"></i>Use My Current Location
+                </button>
+                <div id="locationStatus" class="mb-3 text-muted"></div>
+
+                <!-- Transport Buttons -->
                 <div class="transport-selector">
                     <button class="transport-btn active" data-mode="driving" onclick="setTransport(this, 'driving')">
                         <i class="fas fa-car"></i> Driving
@@ -172,6 +184,7 @@
                         <i class="fas fa-bicycle"></i> Cycling
                     </button>
                 </div>
+
                 <a id="navigateBtn"
                    href="https://www.google.com/maps/dir/?api=1&destination={{ $attraction->latitude }},{{ $attraction->longitude }}&travelmode=driving"
                    target="_blank" class="btn btn-accent w-100 py-3">
@@ -192,22 +205,107 @@
 
 @section('scripts')
 <script>
-    const lat = "{{ $attraction->latitude }}";
-    const lng = "{{ $attraction->longitude }}";
+    const destLat = "{{ $attraction->latitude }}";
+    const destLng = "{{ $attraction->longitude }}";
 
+    // Stores the user's live coordinates
+    let userLat = null;
+    let userLng = null;
+
+    // Tracks the currently active travel mode
+    let currentMode = 'driving';
+
+    /**
+     * Build the Google Maps directions URL.
+     * Automatically includes &origin= if the user's location has been fetched.
+     */
+    function buildMapsUrl(mode) {
+        let url = `https://www.google.com/maps/dir/?api=1&destination=${destLat},${destLng}&travelmode=${mode}`;
+        if (userLat && userLng) {
+            url += `&origin=${userLat},${userLng}`;
+        }
+        return url;
+    }
+
+    /**
+     * Sync both navigation buttons with the latest URL.
+     */
+    function updateButtons() {
+        const url = buildMapsUrl(currentMode);
+        const navigateBtn  = document.getElementById('navigateBtn');
+        const directionsBtn = document.getElementById('directionsBtn');
+        if (navigateBtn)   navigateBtn.href   = url;
+        if (directionsBtn) directionsBtn.href = url;
+    }
+
+    /**
+     * Called when the user clicks a transport mode button.
+     */
     function setTransport(btn, mode) {
-        // Toggle active class
         document.querySelectorAll('.transport-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+        currentMode = mode;
+        updateButtons();
+    }
 
-        // Build Google Maps directions URL with selected travel mode
-        const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=${mode}`;
+    /**
+     * Use the browser Geolocation API to get the user's current position
+     * and set it as the starting point for all direction links.
+     */
+    function fetchUserLocation() {
+        const statusEl  = document.getElementById('locationStatus');
+        const locateBtn = document.getElementById('locateBtn');
 
-        // Update both navigation buttons
-        const navigateBtn = document.getElementById('navigateBtn');
-        const directionsBtn = document.getElementById('directionsBtn');
-        if (navigateBtn) navigateBtn.href = url;
-        if (directionsBtn) directionsBtn.href = url;
+        if (!navigator.geolocation) {
+            statusEl.innerHTML = '<i class="fas fa-circle-xmark text-danger me-1"></i>Geolocation is not supported by your browser.';
+            return;
+        }
+
+        // Loading state
+        locateBtn.disabled = true;
+        locateBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Fetching location…';
+        statusEl.innerHTML  = '<span class="text-muted">Waiting for GPS signal…</span>';
+
+        navigator.geolocation.getCurrentPosition(
+            // ✅ Success callback
+            (position) => {
+                userLat = position.coords.latitude.toFixed(6);
+                userLng = position.coords.longitude.toFixed(6);
+
+                // Update status message
+                statusEl.innerHTML = `
+                    <i class="fas fa-circle-check text-success me-1"></i>
+                    Location set: <strong>${userLat}, ${userLng}</strong>`;
+
+                // Update button appearance
+                locateBtn.disabled = false;
+                locateBtn.innerHTML = '<i class="fas fa-location-crosshairs me-2"></i>Location Detected ✓';
+                locateBtn.classList.remove('btn-outline-success');
+                locateBtn.classList.add('btn-success');
+
+                // Immediately apply origin to all direction links
+                updateButtons();
+            },
+
+            // ❌ Error callback
+            (error) => {
+                locateBtn.disabled = false;
+                locateBtn.innerHTML = '<i class="fas fa-location-crosshairs me-2"></i>Retry My Location';
+
+                const messages = {
+                    1: 'Permission denied. Please allow location access in your browser.',
+                    2: 'Position unavailable. Check your GPS or network.',
+                    3: 'Request timed out. Please try again.',
+                };
+
+                statusEl.innerHTML = `
+                    <i class="fas fa-circle-xmark text-danger me-1"></i>
+                    ${messages[error.code] || 'An unknown error occurred.'}`;
+            },
+
+            // Geolocation options
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
     }
 </script>
 @endsection
