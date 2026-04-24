@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttractionController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\Auth\LoginController;
 
@@ -55,9 +54,6 @@ Route::middleware('auth')->group(function () {
 */
 
 Route::middleware('admin.auth')->group(function () {
-    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
-    Route::put('/reviews/{id}', [ReviewController::class, 'update'])->name('reviews.update');
-    Route::delete('/reviews/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
 /*

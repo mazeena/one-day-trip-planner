@@ -28,9 +28,10 @@
     .map-search-wrap input {
         flex: 1;
         border: 2px solid #e0e0e0;
-        border-radius: 10px;
-        padding: 10px 16px;
-        font-size: 0.95rem;
+        border-radius: 50px;
+      padding: 30px 200px;
+font-size: 1.1rem;
+height: 54px;        
         outline: none;
         transition: border 0.2s;
     }
