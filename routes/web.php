@@ -14,7 +14,8 @@ use App\Http\Controllers\Auth\LoginController;
 */
 
 Route::get('/', function () {
-    return view('home');
+    $reviews = \App\Models\Review::latest()->take(6)->get();
+    return view('home', compact('reviews'));
 })->name('home');
 
 Route::get('/attractions', [AttractionController::class, 'index'])->name('attractions.index');

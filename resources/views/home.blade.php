@@ -326,15 +326,7 @@
                     <p>Select your favourite attractions and save a personalised one-day itinerary you can refer back to anytime.</p>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="feature-card">
-                    <div class="feature-icon" style="background:#f0f9ff;">
-                        <i class="fas fa-star" style="color:#3498db;"></i>
-                    </div>
-                    <h5>Curated Reviews</h5>
-                    <p>Read honest reviews and ratings from fellow travellers to make informed choices about where to spend your day.</p>
-                </div>
-            </div>
+            
             <div class="col-md-4">
                 <div class="feature-card">
                     <div class="feature-icon" style="background:#f9f0ff;">
