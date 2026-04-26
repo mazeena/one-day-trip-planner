@@ -84,17 +84,7 @@
         margin-bottom: 32px;
     }
 
-    .hero-badge {
-        background: rgba(255,255,255,0.15);
-        border: 1.5px solid rgba(255,255,255,0.5);
-        color: #fff;
-        border-radius: 50px;
-        padding: 8px 20px;
-        font-size: 0.88rem;
-        font-weight: 600;
-        backdrop-filter: blur(4px);
-    }
-
+    
     .hero-buttons {
         display: flex;
         gap: 16px;
@@ -232,17 +222,7 @@
         margin-bottom: 32px;
     }
    
-.hero-badge {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-  padding: 14px 18px;
-  border-radius: 10px;
-  border: none;
-  background:#1a6b3a;
-  color: #bfdbfe;
-}
+
 
 </style>
 @endsection
