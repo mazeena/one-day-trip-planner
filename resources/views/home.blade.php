@@ -231,6 +231,19 @@
         opacity: 0.9;
         margin-bottom: 32px;
     }
+   
+.hero-badge {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  border: none;
+  background:#1a6b3a;
+  color: #bfdbfe;
+}
+
 </style>
 @endsection
 
